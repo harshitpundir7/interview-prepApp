@@ -24,7 +24,7 @@ export const sections: SectionInfo[] = [
         title: 'Java Core & OOP',
         icon: 'Coffee',
         color: 'from-orange-400 to-amber-600',
-        description: '30 Most Asked Questions for Technical Project Associate Role.'
+        description: '30 Most Asked Questions for interview.'
     },
     {
         id: 'sql',
