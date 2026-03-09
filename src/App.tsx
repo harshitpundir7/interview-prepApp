@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Coffee, Database, Code2, Check, Award, LayoutDashboard, Target, Zap, RotateCcw, Users } from 'lucide-react';
+import { Coffee, Database, Code2, Check, Award, LayoutDashboard, Target, Zap, RotateCcw, Users, Globe } from 'lucide-react';
 import { questionsData, sections, situationalData } from './data';
 
 const iconMap = {
   Coffee,
   Database,
   Code2,
-  Users
+  Users,
+  Globe
 };
 
 function App() {
@@ -124,8 +125,8 @@ function App() {
           {sections.map((section, idx) => {
             const Icon = iconMap[section.icon as keyof typeof iconMap];
             const isActive = activeSectionId === section.id;
-            const secQs = section.id === 'situational' ? [] : questionsData.filter(q => q.sectionId === section.id);
-            const secTotal = section.id === 'situational' ? situationalData.length : secQs.length;
+            const secQs = (section.id === 'situational') ? [] : questionsData.filter(q => q.sectionId === section.id);
+            const secTotal = (section.id === 'situational') ? situationalData.length : secQs.length;
             const secCompleted = secQs.filter(q => completedQuests.has(q.id)).length;
             const secProg = secTotal === 0 ? 0 : Math.round((secCompleted / secTotal) * 100);
 
@@ -155,6 +156,7 @@ function App() {
                 <span className="nav-count">
                   {section.id === 'situational' ? `${situationalData.length} Q&A` : `${secCompleted}/${secTotal}`}
                 </span>
+
               </button>
             );
           })}
@@ -177,6 +179,7 @@ function App() {
             backgroundImage: `linear-gradient(to right, ${activeSectionId === 'java' ? '#f97316, #d97706' :
               activeSectionId === 'sql' ? '#60a5fa, #4f46e5' :
                 activeSectionId === 'situational' ? '#a855f7, #ec4899' :
+                  activeSectionId === 'webdev' ? '#22d3ee, #0ea5e9' :
                   '#34d399, #0d9488'
               })`,
             WebkitBackgroundClip: 'text',
@@ -268,6 +271,67 @@ function App() {
                 </div>
               </div>
             ))}
+          </div>
+        ) : activeSectionId === 'webdev' ? (
+          <div className="questions-list">
+            {(() => {
+              // Group webdev questions by subsection while preserving order
+              const groups: { name: string; questions: typeof sectionQuestions }[] = [];
+              const seen = new Map<string, typeof sectionQuestions>();
+              sectionQuestions.forEach(q => {
+                const sub = q.subsection || 'General';
+                if (!seen.has(sub)) {
+                  seen.set(sub, []);
+                  groups.push({ name: sub, questions: seen.get(sub)! });
+                }
+                seen.get(sub)!.push(q);
+              });
+
+              let globalIdx = 0;
+              return groups.map(group => (
+                <div key={group.name} className="webdev-subsection">
+                  <div className="webdev-subsection-header">
+                    <span className="webdev-subsection-title">{group.name}</span>
+                    <span className="webdev-subsection-count">{group.questions.length} Questions</span>
+                  </div>
+                  {group.questions.map(q => {
+                    const isCompleted = completedQuests.has(q.id);
+                    const isRevised = revisedQuests.has(q.id);
+                    const displayIdx = ++globalIdx;
+                    return (
+                      <div
+                        key={q.id}
+                        className={`question-item glass-panel animate-fade-up ${isCompleted ? 'completed' : ''} ${isRevised ? 'revised' : ''}`}
+                        style={{ animationDelay: `${0.05 + displayIdx * 0.03}s` }}
+                      >
+                        <div className="checkboxes-wrapper">
+                          <button
+                            className={`checkbox-container done ${isCompleted ? 'checked' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); toggleQuestion(q.id); }}
+                            title="Mark as Done"
+                          >
+                            <div className="checkbox-bg"></div>
+                            {isCompleted && <Check size={14} strokeWidth={4} className="check-icon" />}
+                          </button>
+                          <button
+                            className={`checkbox-container revise ${isRevised ? 'checked' : ''}`}
+                            onClick={(e) => { e.stopPropagation(); toggleRevise(q.id); }}
+                            title="Mark for Revision"
+                          >
+                            <div className="checkbox-bg"></div>
+                            {isRevised && <RotateCcw size={14} strokeWidth={3} className="check-icon" />}
+                          </button>
+                        </div>
+                        <div className="question-content">
+                          <div className="question-number">Q{displayIdx}</div>
+                          <div className="question-text">{q.text}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ));
+            })()}
           </div>
         ) : (
           <div className="questions-list">

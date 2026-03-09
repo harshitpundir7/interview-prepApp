@@ -10,6 +10,7 @@ export type Question = {
     id: number;
     text: string;
     sectionId: string;
+    subsection?: string;
 };
 
 export type SituationalQuestion = {
@@ -46,6 +47,13 @@ export const sections: SectionInfo[] = [
         icon: 'Users',
         color: 'from-purple-400 to-pink-600',
         description: '25 Situational-based interview questions for Sales & Technical Project Associate roles.'
+    },
+    {
+        id: 'webdev',
+        title: 'Web Dev FundaMental',
+        icon: 'Globe',
+        color: 'from-cyan-400 to-sky-600',
+        description: '145 Web Development interview questions covering HTML, CSS, JavaScript, React, APIs, Git, System Concepts & HR.'
     }
 ];
 
@@ -144,7 +152,182 @@ export const questionsData: Question[] = [
     { id: 87, sectionId: 'dsa', text: 'Next Greater Element (for each element in array).' },
     { id: 88, sectionId: 'dsa', text: 'Min Stack (push, pop, top, getMin in O(1)).' },
     { id: 89, sectionId: 'dsa', text: 'Implement Binary Search on a sorted array.' },
-    { id: 90, sectionId: 'dsa', text: 'Explain time & space complexity of common data structures and sorting algorithms.' }
+    { id: 90, sectionId: 'dsa', text: 'Explain time & space complexity of common data structures and sorting algorithms.' },
+
+    // WEBDEV section — HTML (15)
+    { id: 91, sectionId: 'webdev', subsection: 'HTML', text: 'What is HTML?' },
+    { id: 92, sectionId: 'webdev', subsection: 'HTML', text: 'What are semantic HTML elements?' },
+    { id: 93, sectionId: 'webdev', subsection: 'HTML', text: 'Difference between div and span?' },
+    { id: 94, sectionId: 'webdev', subsection: 'HTML', text: 'What is DOCTYPE?' },
+    { id: 95, sectionId: 'webdev', subsection: 'HTML', text: 'Difference between id and class?' },
+    { id: 96, sectionId: 'webdev', subsection: 'HTML', text: 'What are meta tags?' },
+    { id: 97, sectionId: 'webdev', subsection: 'HTML', text: 'What is HTML5?' },
+    { id: 98, sectionId: 'webdev', subsection: 'HTML', text: 'What are data attributes?' },
+    { id: 99, sectionId: 'webdev', subsection: 'HTML', text: 'Difference between inline and block elements?' },
+    { id: 100, sectionId: 'webdev', subsection: 'HTML', text: 'What are void elements?' },
+    { id: 101, sectionId: 'webdev', subsection: 'HTML', text: 'What is iframe?' },
+    { id: 102, sectionId: 'webdev', subsection: 'HTML', text: 'What is localStorage vs sessionStorage?' },
+    { id: 103, sectionId: 'webdev', subsection: 'HTML', text: 'What is canvas element?' },
+    { id: 104, sectionId: 'webdev', subsection: 'HTML', text: 'What are ARIA attributes?' },
+    { id: 105, sectionId: 'webdev', subsection: 'HTML', text: 'What is SEO friendly HTML?' },
+
+    // WEBDEV section — CSS (20)
+    { id: 106, sectionId: 'webdev', subsection: 'CSS', text: 'What is CSS?' },
+    { id: 107, sectionId: 'webdev', subsection: 'CSS', text: 'What is the box model?' },
+    { id: 108, sectionId: 'webdev', subsection: 'CSS', text: 'Difference between margin and padding?' },
+    { id: 109, sectionId: 'webdev', subsection: 'CSS', text: 'What is display property?' },
+    { id: 110, sectionId: 'webdev', subsection: 'CSS', text: 'Difference between inline, block, inline-block?' },
+    { id: 111, sectionId: 'webdev', subsection: 'CSS', text: 'What is flexbox?' },
+    { id: 112, sectionId: 'webdev', subsection: 'CSS', text: 'What is CSS grid?' },
+    { id: 113, sectionId: 'webdev', subsection: 'CSS', text: 'Difference between flexbox vs grid?' },
+    { id: 114, sectionId: 'webdev', subsection: 'CSS', text: 'What is position property?' },
+    { id: 115, sectionId: 'webdev', subsection: 'CSS', text: 'Difference between relative, absolute, fixed, sticky positioning?' },
+    { id: 116, sectionId: 'webdev', subsection: 'CSS', text: 'What is z-index?' },
+    { id: 117, sectionId: 'webdev', subsection: 'CSS', text: 'What is responsive design?' },
+    { id: 118, sectionId: 'webdev', subsection: 'CSS', text: 'What are media queries?' },
+    { id: 119, sectionId: 'webdev', subsection: 'CSS', text: 'Difference between em vs rem vs px?' },
+    { id: 120, sectionId: 'webdev', subsection: 'CSS', text: 'What is overflow property?' },
+    { id: 121, sectionId: 'webdev', subsection: 'CSS', text: 'What is float?' },
+    { id: 122, sectionId: 'webdev', subsection: 'CSS', text: 'What is clearfix?' },
+    { id: 123, sectionId: 'webdev', subsection: 'CSS', text: 'What are pseudo classes?' },
+    { id: 124, sectionId: 'webdev', subsection: 'CSS', text: 'What are pseudo elements?' },
+    { id: 125, sectionId: 'webdev', subsection: 'CSS', text: 'Difference between visibility:hidden vs display:none?' },
+
+    // WEBDEV section — JavaScript: Basics (10)
+    { id: 126, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is JavaScript?' },
+    { id: 127, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'Difference between var, let, const?' },
+    { id: 128, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is hoisting?' },
+    { id: 129, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is scope in JS?' },
+    { id: 130, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is closure?' },
+    { id: 131, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is this keyword?' },
+    { id: 132, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is event bubbling?' },
+    { id: 133, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is event capturing?' },
+    { id: 134, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'Difference between == and ===?' },
+    { id: 135, sectionId: 'webdev', subsection: 'JavaScript — Basics', text: 'What is NaN?' },
+
+    // WEBDEV section — JavaScript: Intermediate (10)
+    { id: 136, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is callback function?' },
+    { id: 137, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is promise?' },
+    { id: 138, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is async/await?' },
+    { id: 139, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is event loop?' },
+    { id: 140, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is call stack?' },
+    { id: 141, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is setTimeout?' },
+    { id: 142, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is debouncing?' },
+    { id: 143, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is throttling?' },
+    { id: 144, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is prototype?' },
+    { id: 145, sectionId: 'webdev', subsection: 'JavaScript — Intermediate', text: 'What is object destructuring?' },
+
+    // WEBDEV section — JavaScript: Advanced (10)
+    { id: 146, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is spread operator?' },
+    { id: 147, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is rest operator?' },
+    { id: 148, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is arrow function?' },
+    { id: 149, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'Difference between map, filter, reduce?' },
+    { id: 150, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is deep copy vs shallow copy?' },
+    { id: 151, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is JSON?' },
+    { id: 152, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is localStorage?' },
+    { id: 153, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is sessionStorage?' },
+    { id: 154, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is IIFE?' },
+    { id: 155, sectionId: 'webdev', subsection: 'JavaScript — Advanced', text: 'What is currying?' },
+
+    // WEBDEV section — JavaScript: Practical (10)
+    { id: 156, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Reverse a string in JavaScript.' },
+    { id: 157, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Find largest number in array.' },
+    { id: 158, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Remove duplicates from array.' },
+    { id: 159, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Flatten nested array.' },
+    { id: 160, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Check palindrome in JavaScript.' },
+    { id: 161, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Count character frequency in a string.' },
+    { id: 162, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Sort array without sort().' },
+    { id: 163, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Debounce function implementation.' },
+    { id: 164, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Deep clone object.' },
+    { id: 165, sectionId: 'webdev', subsection: 'JavaScript — Practical', text: 'Implement custom map function.' },
+
+    // WEBDEV section — React: Basics (10)
+    { id: 166, sectionId: 'webdev', subsection: 'React — Basics', text: 'What is React?' },
+    { id: 167, sectionId: 'webdev', subsection: 'React — Basics', text: 'What is JSX?' },
+    { id: 168, sectionId: 'webdev', subsection: 'React — Basics', text: 'What are components?' },
+    { id: 169, sectionId: 'webdev', subsection: 'React — Basics', text: 'Difference between functional vs class components?' },
+    { id: 170, sectionId: 'webdev', subsection: 'React — Basics', text: 'What are props?' },
+    { id: 171, sectionId: 'webdev', subsection: 'React — Basics', text: 'What is state?' },
+    { id: 172, sectionId: 'webdev', subsection: 'React — Basics', text: 'Difference between state vs props?' },
+    { id: 173, sectionId: 'webdev', subsection: 'React — Basics', text: 'What is Virtual DOM?' },
+    { id: 174, sectionId: 'webdev', subsection: 'React — Basics', text: 'What are keys in React?' },
+    { id: 175, sectionId: 'webdev', subsection: 'React — Basics', text: 'What is React lifecycle?' },
+
+    // WEBDEV section — React: Hooks (5)
+    { id: 176, sectionId: 'webdev', subsection: 'React — Hooks', text: 'What is useState?' },
+    { id: 177, sectionId: 'webdev', subsection: 'React — Hooks', text: 'What is useEffect?' },
+    { id: 178, sectionId: 'webdev', subsection: 'React — Hooks', text: 'What is useContext?' },
+    { id: 179, sectionId: 'webdev', subsection: 'React — Hooks', text: 'What is useRef?' },
+    { id: 180, sectionId: 'webdev', subsection: 'React — Hooks', text: 'What is custom hook?' },
+
+    // WEBDEV section — React: Advanced (5)
+    { id: 181, sectionId: 'webdev', subsection: 'React — Advanced', text: 'What is React Router?' },
+    { id: 182, sectionId: 'webdev', subsection: 'React — Advanced', text: 'What is Redux?' },
+    { id: 183, sectionId: 'webdev', subsection: 'React — Advanced', text: 'What is Context API?' },
+    { id: 184, sectionId: 'webdev', subsection: 'React — Advanced', text: 'What is lazy loading?' },
+    { id: 185, sectionId: 'webdev', subsection: 'React — Advanced', text: 'What is code splitting?' },
+
+    // WEBDEV section — React: Performance (4)
+    { id: 186, sectionId: 'webdev', subsection: 'React — Performance', text: 'What is memoization in React?' },
+    { id: 187, sectionId: 'webdev', subsection: 'React — Performance', text: 'What is React.memo?' },
+    { id: 188, sectionId: 'webdev', subsection: 'React — Performance', text: 'What is useMemo?' },
+    { id: 189, sectionId: 'webdev', subsection: 'React — Performance', text: 'What is useCallback?' },
+
+    // WEBDEV section — React: Practical (6)
+    { id: 190, sectionId: 'webdev', subsection: 'React — Practical', text: 'Fetch API in React.' },
+    { id: 191, sectionId: 'webdev', subsection: 'React — Practical', text: 'Form handling in React.' },
+    { id: 192, sectionId: 'webdev', subsection: 'React — Practical', text: 'Controlled vs uncontrolled components in React.' },
+    { id: 193, sectionId: 'webdev', subsection: 'React — Practical', text: 'Error boundaries in React.' },
+    { id: 194, sectionId: 'webdev', subsection: 'React — Practical', text: 'React folder structure best practices.' },
+    { id: 195, sectionId: 'webdev', subsection: 'React — Practical', text: 'React optimization techniques.' },
+
+    // WEBDEV section — API & Backend (10)
+    { id: 196, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is an API?' },
+    { id: 197, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is REST API?' },
+    { id: 198, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'Difference between REST and SOAP?' },
+    { id: 199, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'HTTP methods (GET, POST, PUT, DELETE)?' },
+    { id: 200, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is status code?' },
+    { id: 201, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is JWT authentication?' },
+    { id: 202, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is CORS?' },
+    { id: 203, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is fetch API?' },
+    { id: 204, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is axios?' },
+    { id: 205, sectionId: 'webdev', subsection: 'APIs & Backend', text: 'What is rate limiting?' },
+
+    // WEBDEV section — Git (10)
+    { id: 206, sectionId: 'webdev', subsection: 'Git', text: 'What is Git?' },
+    { id: 207, sectionId: 'webdev', subsection: 'Git', text: 'What is GitHub?' },
+    { id: 208, sectionId: 'webdev', subsection: 'Git', text: 'Difference between git pull vs git fetch?' },
+    { id: 209, sectionId: 'webdev', subsection: 'Git', text: 'What is branching in Git?' },
+    { id: 210, sectionId: 'webdev', subsection: 'Git', text: 'What is merge conflict?' },
+    { id: 211, sectionId: 'webdev', subsection: 'Git', text: 'What is git rebase?' },
+    { id: 212, sectionId: 'webdev', subsection: 'Git', text: 'What is fork in Git?' },
+    { id: 213, sectionId: 'webdev', subsection: 'Git', text: 'What is git stash?' },
+    { id: 214, sectionId: 'webdev', subsection: 'Git', text: 'What is git reset?' },
+    { id: 215, sectionId: 'webdev', subsection: 'Git', text: 'What is CI/CD?' },
+
+    // WEBDEV section — System / Web Concepts (10)
+    { id: 216, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What happens when you type a URL in browser?' },
+    { id: 217, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is DNS?' },
+    { id: 218, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is CDN?' },
+    { id: 219, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is browser caching?' },
+    { id: 220, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is HTTP vs HTTPS?' },
+    { id: 221, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is SSR vs CSR?' },
+    { id: 222, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is web security?' },
+    { id: 223, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is XSS attack?' },
+    { id: 224, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is CSRF attack?' },
+    { id: 225, sectionId: 'webdev', subsection: 'System & Web Concepts', text: 'What is JWT?' },
+
+    // WEBDEV section — HR Questions (10)
+    { id: 226, sectionId: 'webdev', subsection: 'HR Questions', text: 'Tell me about yourself.' },
+    { id: 227, sectionId: 'webdev', subsection: 'HR Questions', text: 'Why do you want to join RM Applications?' },
+    { id: 228, sectionId: 'webdev', subsection: 'HR Questions', text: 'Why should we hire you?' },
+    { id: 229, sectionId: 'webdev', subsection: 'HR Questions', text: 'What are your strengths?' },
+    { id: 230, sectionId: 'webdev', subsection: 'HR Questions', text: 'What are your weaknesses?' },
+    { id: 231, sectionId: 'webdev', subsection: 'HR Questions', text: 'Describe a difficult bug you solved.' },
+    { id: 232, sectionId: 'webdev', subsection: 'HR Questions', text: 'How do you handle deadlines?' },
+    { id: 233, sectionId: 'webdev', subsection: 'HR Questions', text: 'Have you worked remotely before?' },
+    { id: 234, sectionId: 'webdev', subsection: 'HR Questions', text: 'Where do you see yourself in 5 years?' },
+    { id: 235, sectionId: 'webdev', subsection: 'HR Questions', text: 'What are your salary expectations?' }
 ];
 
 export const situationalData: SituationalQuestion[] = [
