@@ -142,16 +142,18 @@ function App() {
                 </div>
                 <div className="nav-info">
                   <span className="nav-title">{section.title}</span>
-                  <div className="nav-progress">
-                    <div
-                      className="nav-progress-fill progress-bar-fill"
-                      style={{
-                        width: `${secProg}%`,
-                        background: isActive ? 'linear-gradient(90deg, #6366f1, #d946ef)' : 'transparent',
-                        backgroundColor: isActive ? 'transparent' : '#3f3f46'
-                      }}
-                    />
-                  </div>
+                  {section.id !== 'situational' && (
+                    <div className="nav-progress">
+                      <div
+                        className="nav-progress-fill progress-bar-fill"
+                        style={{
+                          width: `${secProg}%`,
+                          background: isActive ? 'linear-gradient(90deg, #6366f1, #d946ef)' : 'transparent',
+                          backgroundColor: isActive ? 'transparent' : '#3f3f46'
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
                 <span className="nav-count">
                   {section.id === 'situational' ? `${situationalData.length} Q&A` : `${secCompleted}/${secTotal}`}
