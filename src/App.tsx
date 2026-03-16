@@ -274,10 +274,10 @@ function App() {
               </div>
             ))}
           </div>
-        ) : activeSectionId === 'webdev' ? (
+        ) : sectionQuestions.some(q => q.subsection) ? (
           <div className="questions-list">
             {(() => {
-              // Group webdev questions by subsection while preserving order
+              // Group questions by subsection while preserving order
               const groups: { name: string; questions: typeof sectionQuestions }[] = [];
               const seen = new Map<string, typeof sectionQuestions>();
               sectionQuestions.forEach(q => {

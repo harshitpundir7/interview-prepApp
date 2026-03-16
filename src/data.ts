@@ -123,36 +123,55 @@ export const questionsData: Question[] = [
     { id: 60, sectionId: 'sql', text: 'What is a View? Difference between Simple View and Complex View? When to use materialized view?' },
 
     // DSA section
-    { id: 61, sectionId: 'dsa', text: 'Reverse an array / string (in-place).' },
-    { id: 62, sectionId: 'dsa', text: 'Check if a string is a palindrome.' },
-    { id: 63, sectionId: 'dsa', text: 'Check if two strings are anagrams.' },
-    { id: 64, sectionId: 'dsa', text: 'Find all duplicates in an array (return list or count).' },
-    { id: 65, sectionId: 'dsa', text: 'Two Sum – find indices of two numbers that add up to target.' },
-    { id: 66, sectionId: 'dsa', text: 'Remove duplicates from a sorted array (in-place, return new length).' },
-    { id: 67, sectionId: 'dsa', text: 'Find the second largest / second smallest element in an array.' },
-    { id: 68, sectionId: 'dsa', text: 'Rotate an array by k steps (right/left).' },
-    { id: 69, sectionId: 'dsa', text: 'Best Time to Buy and Sell Stock (maximum profit – one transaction).' },
-    { id: 70, sectionId: 'dsa', text: 'Find the missing number in an array.' },
-    { id: 71, sectionId: 'dsa', text: 'Move all zeros to the end of the array (in-place).' },
-    { id: 72, sectionId: 'dsa', text: 'Maximum subarray sum (Kadane’s algorithm).' },
-    { id: 73, sectionId: 'dsa', text: 'First non-repeating character in a string.' },
-    { id: 74, sectionId: 'dsa', text: 'Intersection of two arrays (or common elements with frequency).' },
-    { id: 75, sectionId: 'dsa', text: 'Contains Duplicate (return true if any value appears at least twice).' },
-    { id: 76, sectionId: 'dsa', text: 'Group Anagrams (group strings that are anagrams).' },
-    { id: 77, sectionId: 'dsa', text: 'Find the majority element (appears > n/2 times).' },
-    { id: 78, sectionId: 'dsa', text: 'Count frequency of each element.' },
-    { id: 79, sectionId: 'dsa', text: 'Reverse a singly linked list (iterative + recursive both expected).' },
-    { id: 80, sectionId: 'dsa', text: 'Detect a cycle in linked list (Floyd’s tortoise-hare).' },
-    { id: 81, sectionId: 'dsa', text: 'Find the middle of a linked list.' },
-    { id: 82, sectionId: 'dsa', text: 'Remove duplicates from an unsorted linked list.' },
-    { id: 83, sectionId: 'dsa', text: 'Merge two sorted linked lists.' },
-    { id: 84, sectionId: 'dsa', text: 'Delete a node when only pointer to that node is given (no head).' },
-    { id: 85, sectionId: 'dsa', text: 'Valid Parentheses (check balanced brackets).' },
-    { id: 86, sectionId: 'dsa', text: 'Implement Stack using Queues (or Queue using Stacks).' },
-    { id: 87, sectionId: 'dsa', text: 'Next Greater Element (for each element in array).' },
-    { id: 88, sectionId: 'dsa', text: 'Min Stack (push, pop, top, getMin in O(1)).' },
-    { id: 89, sectionId: 'dsa', text: 'Implement Binary Search on a sorted array.' },
-    { id: 90, sectionId: 'dsa', text: 'Explain time & space complexity of common data structures and sorting algorithms.' },
+    // Strings (6)
+    { id: 61, sectionId: 'dsa', subsection: 'Strings', text: 'Reverse a string (or array) in-place without built-in reverse methods' },
+    { id: 62, sectionId: 'dsa', subsection: 'Strings', text: 'Check if a string is a palindrome (ignore case, spaces, punctuation)' },
+    { id: 63, sectionId: 'dsa', subsection: 'Strings', text: 'Check if two strings are anagrams (multiple variations)' },
+    { id: 64, sectionId: 'dsa', subsection: 'Strings', text: 'Find the first non-repeating character in a string' },
+    { id: 65, sectionId: 'dsa', subsection: 'Strings', text: 'Group Anagrams (group list of strings that are anagrams)' },
+    { id: 66, sectionId: 'dsa', subsection: 'Strings', text: 'Valid Parentheses / Check balanced brackets (using stack)' },
+
+    // Arrays (12)
+    { id: 67, sectionId: 'dsa', subsection: 'Arrays', text: 'Remove duplicates from a sorted array (in-place, return new length)' },
+    { id: 68, sectionId: 'dsa', subsection: 'Arrays', text: 'Remove duplicates from an unsorted array (or return unique elements)' },
+    { id: 69, sectionId: 'dsa', subsection: 'Arrays', text: 'Move all zeros to the end of the array (in-place)' },
+    { id: 70, sectionId: 'dsa', subsection: 'Arrays', text: 'Rotate an array by k steps (left or right, in-place preferred)' },
+    { id: 71, sectionId: 'dsa', subsection: 'Arrays', text: 'Find the missing number in array (1 to n)' },
+    { id: 72, sectionId: 'dsa', subsection: 'Arrays', text: 'Find intersection of two arrays (with/without frequency)' },
+    { id: 73, sectionId: 'dsa', subsection: 'Arrays', text: 'Contains Duplicate (return true if any duplicate exists)' },
+    { id: 74, sectionId: 'dsa', subsection: 'Arrays', text: 'Find all duplicates in an array (return list or count occurrences)' },
+    { id: 75, sectionId: 'dsa', subsection: 'Arrays', text: 'Count frequency / occurrences of each element (using object/Map)' },
+    { id: 76, sectionId: 'dsa', subsection: 'Arrays', text: 'Find the majority element (appears > n/2 times – Boyer-Moore)' },
+    { id: 77, sectionId: 'dsa', subsection: 'Arrays', text: 'Find second largest / second smallest element in array' },
+    { id: 78, sectionId: 'dsa', subsection: 'Arrays', text: 'Next Greater Element (for each element – monotonic stack)' },
+
+    // Two Pointers & Sliding Window (3)
+    { id: 79, sectionId: 'dsa', subsection: 'Two Pointers / Sliding Window', text: 'Two Sum (return indices that add to target – hashmap version)' },
+    { id: 80, sectionId: 'dsa', subsection: 'Two Pointers / Sliding Window', text: 'Best Time to Buy and Sell Stock (max profit – one transaction)' },
+    { id: 81, sectionId: 'dsa', subsection: 'Two Pointers / Sliding Window', text: 'Maximum subarray sum (Kadane’s algorithm)' },
+
+    // Searching & Sorting (3)
+    { id: 82, sectionId: 'dsa', subsection: 'Searching & Sorting', text: 'Implement Binary Search on a sorted array' },
+    { id: 83, sectionId: 'dsa', subsection: 'Searching & Sorting', text: 'Find the middle element of a linked list (slow + fast pointer)' },
+    { id: 84, sectionId: 'dsa', subsection: 'Searching & Sorting', text: 'Merge two sorted arrays (or merge into one array)' },
+
+    // Linked List (5)
+    { id: 85, sectionId: 'dsa', subsection: 'Linked List', text: 'Reverse a singly linked list (iterative + recursive both expected)' },
+    { id: 86, sectionId: 'dsa', subsection: 'Linked List', text: 'Detect a cycle in linked list (Floyd’s tortoise-hare)' },
+    { id: 87, sectionId: 'dsa', subsection: 'Linked List', text: 'Merge two sorted linked lists' },
+    { id: 88, sectionId: 'dsa', subsection: 'Linked List', text: 'Remove duplicates from an unsorted linked list' },
+    { id: 89, sectionId: 'dsa', subsection: 'Linked List', text: 'Delete a node when only pointer to that node is given (no head)' },
+
+    // Stack & Queue (4)
+    { id: 90, sectionId: 'dsa', subsection: 'Stack / Queue', text: 'Implement a simple Stack using array (push/pop/peek)' },
+    { id: 236, sectionId: 'dsa', subsection: 'Stack / Queue', text: 'Implement a Queue using array' },
+    { id: 237, sectionId: 'dsa', subsection: 'Stack / Queue', text: 'Implement Stack using Queues (or Queue using Stacks)' },
+    { id: 238, sectionId: 'dsa', subsection: 'Stack / Queue', text: 'Min Stack (push, pop, top, getMin in O(1) time)' },
+
+    // Classic Patterns (3)
+    { id: 239, sectionId: 'dsa', subsection: 'Classic Easy Patterns', text: 'FizzBuzz (1 to n with 3/5 multiples)' },
+    { id: 240, sectionId: 'dsa', subsection: 'Classic Easy Patterns', text: 'Factorial and Fibonacci (recursive vs iterative – recursion check)' },
+    { id: 241, sectionId: 'dsa', subsection: 'Classic Easy Patterns', text: 'Valid Mountain Array (or similar pattern recognition)' },
 
     // WEBDEV section — HTML (15)
     { id: 91, sectionId: 'webdev', subsection: 'HTML', text: 'What is HTML?' },
