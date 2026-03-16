@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Coffee, Database, Code2, Check, Award, LayoutDashboard, Target, Zap, RotateCcw, Users, Globe } from 'lucide-react';
-import { questionsData, sections, situationalData } from './data';
+import { questionsData, sections } from './data';
 
 const iconMap = {
   Coffee,
@@ -125,8 +125,8 @@ function App() {
           {sections.map((section, idx) => {
             const Icon = iconMap[section.icon as keyof typeof iconMap];
             const isActive = activeSectionId === section.id;
-            const secQs = (section.id === 'situational') ? [] : questionsData.filter(q => q.sectionId === section.id);
-            const secTotal = (section.id === 'situational') ? situationalData.length : secQs.length;
+            const secQs = questionsData.filter(q => q.sectionId === section.id);
+            const secTotal = secQs.length;
             const secCompleted = secQs.filter(q => completedQuests.has(q.id)).length;
             const secProg = secTotal === 0 ? 0 : Math.round((secCompleted / secTotal) * 100);
 
@@ -142,21 +142,19 @@ function App() {
                 </div>
                 <div className="nav-info">
                   <span className="nav-title">{section.title}</span>
-                  {section.id !== 'situational' && (
-                    <div className="nav-progress">
-                      <div
-                        className="nav-progress-fill progress-bar-fill"
-                        style={{
-                          width: `${secProg}%`,
-                          background: isActive ? 'linear-gradient(90deg, #6366f1, #d946ef)' : 'transparent',
-                          backgroundColor: isActive ? 'transparent' : '#3f3f46'
-                        }}
-                      />
-                    </div>
-                  )}
+                  <div className="nav-progress">
+                    <div
+                      className="nav-progress-fill progress-bar-fill"
+                      style={{
+                        width: `${secProg}%`,
+                        background: isActive ? 'linear-gradient(90deg, #6366f1, #d946ef)' : 'transparent',
+                        backgroundColor: isActive ? 'transparent' : '#3f3f46'
+                      }}
+                    />
+                  </div>
                 </div>
                 <span className="nav-count">
-                  {section.id === 'situational' ? `${situationalData.length} Q&A` : `${secCompleted}/${secTotal}`}
+                  {`${secCompleted}/${secTotal}`}
                 </span>
 
               </button>
@@ -180,9 +178,8 @@ function App() {
           <h1 className="section-title text-transparent" style={{
             backgroundImage: `linear-gradient(to right, ${activeSectionId === 'java' ? '#f97316, #d97706' :
               activeSectionId === 'sql' ? '#60a5fa, #4f46e5' :
-                activeSectionId === 'situational' ? '#a855f7, #ec4899' :
-                  activeSectionId === 'webdev' ? '#22d3ee, #0ea5e9' :
-                  '#34d399, #0d9488'
+                activeSectionId === 'webdev' ? '#22d3ee, #0ea5e9' :
+                '#34d399, #0d9488'
               })`,
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -192,38 +189,7 @@ function App() {
           <p className="section-desc">{activeSection.description}</p>
         </div>
 
-        {activeSectionId === 'situational' ? (
-          <div className="stats-grid animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <div className="stat-card glass-panel hover-glow-blue card-lift">
-              <div className="stat-icon-wrap bg-blue-500/10">
-                <Target size={20} className="text-blue-400" />
-              </div>
-              <div className="stat-details">
-                <div className="stat-title">Total Questions</div>
-                <div className="stat-value text-blue-400">25</div>
-              </div>
-            </div>
-            <div className="stat-card glass-panel hover-glow-amber card-lift">
-              <div className="stat-icon-wrap bg-amber-500/10">
-                <Zap size={20} className="text-amber-400" />
-              </div>
-              <div className="stat-details">
-                <div className="stat-title">Category</div>
-                <div className="stat-value text-amber-400" style={{ fontSize: '1.5rem' }}>Situational</div>
-              </div>
-            </div>
-            <div className="stat-card glass-panel hover-glow-emerald card-lift">
-              <div className="stat-icon-wrap bg-emerald-500/10">
-                <Award size={20} className="text-emerald-400" />
-              </div>
-              <div className="stat-details">
-                <div className="stat-title">Role Focus</div>
-                <div className="stat-value text-emerald-400" style={{ fontSize: '1.3rem' }}>TPA / Sales</div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div className="stats-grid animate-fade-up" style={{ animationDelay: '0.3s' }}>
+        <div className="stats-grid animate-fade-up" style={{ animationDelay: '0.3s' }}>
             <div className="stat-card glass-panel hover-glow-blue card-lift">
               <div className="stat-icon-wrap bg-blue-500/10">
                 <Target size={20} className="text-blue-400" />
@@ -252,29 +218,8 @@ function App() {
               </div>
             </div>
           </div>
-        )}
 
-        {activeSectionId === 'situational' ? (
-          <div className="questions-list">
-            {situationalData.map((q, idx) => (
-              <div
-                key={q.id}
-                className="situational-item glass-panel animate-fade-up"
-                style={{ animationDelay: `${0.1 + idx * 0.04}s` }}
-              >
-                <div className="situational-question-header">
-                  <span className="situational-number">Q{idx + 1}</span>
-                  <div className="situational-question-text">{q.question}</div>
-                </div>
-                <div className="situational-answer">
-                  {q.answer.split('\n\n').map((para, pIdx) => (
-                    <p key={pIdx} className="situational-para">{para}</p>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : sectionQuestions.some(q => q.subsection) ? (
+        {sectionQuestions.some(q => q.subsection) ? (
           <div className="questions-list">
             {(() => {
               // Group questions by subsection while preserving order

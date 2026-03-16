@@ -13,11 +13,6 @@ export type Question = {
     subsection?: string;
 };
 
-export type SituationalQuestion = {
-    id: number;
-    question: string;
-    answer: string;
-};
 
 export const sections: SectionInfo[] = [
     {
@@ -40,13 +35,6 @@ export const sections: SectionInfo[] = [
         icon: 'Code2',
         color: 'from-emerald-400 to-teal-600',
         description: 'Arrays, Strings, HashMaps, Linked Lists, Stacks & Queues.'
-    },
-    {
-        id: 'situational',
-        title: 'Situational Based',
-        icon: 'Users',
-        color: 'from-purple-400 to-pink-600',
-        description: '25 Situational-based interview questions for Sales & Technical Project Associate roles.'
     },
     {
         id: 'webdev',
@@ -347,132 +335,4 @@ export const questionsData: Question[] = [
     { id: 233, sectionId: 'webdev', subsection: 'HR Questions', text: 'Have you worked remotely before?' },
     { id: 234, sectionId: 'webdev', subsection: 'HR Questions', text: 'Where do you see yourself in 5 years?' },
     { id: 235, sectionId: 'webdev', subsection: 'HR Questions', text: 'What are your salary expectations?' }
-];
-
-export const situationalData: SituationalQuestion[] = [
-    {
-        id: 1,
-        question: 'A feature is delayed — how will you track & escalate?',
-        answer: 'First, I will check the task tracking tool like Jira to see the exact status. Then I\'ll talk to the developer to understand the reason for delay — whether it\'s a technical issue, dependency, or requirement confusion.\n\nIf it\'s a blocker, I\'ll try to resolve it by coordinating with the BA or other team members. If the delay can impact the sprint or release, I\'ll immediately inform the Technical Manager with clear facts — not assumptions.\n\nI believe in early escalation rather than last-minute surprises.'
-    },
-    {
-        id: 2,
-        question: 'Sprint ending in 2 days but only 55–60% complete — what will you do?',
-        answer: 'In that case, I\'ll first review all remaining tasks and categorize them into critical and non-critical items.\n\nThen I\'ll discuss with the team what can realistically be completed in the remaining time without compromising quality.\n\nI\'ll communicate the actual progress to stakeholders and, if required, move lower-priority items to the next sprint with proper re-estimation.\n\nI prefer delivering stable features instead of rushing incomplete work.'
-    },
-    {
-        id: 3,
-        question: 'Developer consistently missing estimates — how do you handle it?',
-        answer: 'I would first schedule a one-on-one discussion to understand the reason. Maybe the tasks are not clearly defined, or maybe there is a technical gap.\n\nI\'ll help them break tasks into smaller, manageable parts so estimation becomes more accurate.\n\nIf needed, I\'ll suggest pairing with a senior developer or improving requirement clarity.\n\nMy goal is improvement and support, not blaming.'
-    },
-    {
-        id: 4,
-        question: 'Mid-sprint major requirement change — how do you handle it?',
-        answer: 'First, I\'ll understand the impact of the change — how much rework is required and whether it affects completed tasks.\n\nThen I\'ll discuss with the BA and Technical Manager. If it\'s business-critical, we may adjust sprint priorities. Otherwise, I\'ll suggest adding it to the next sprint backlog.\n\nI believe scope changes should always be documented and agreed upon, not done informally.'
-    },
-    {
-        id: 5,
-        question: 'Major risk identified before release — what do you do?',
-        answer: 'If I identify a major risk, I\'ll immediately document it and inform the Technical Manager.\n\nThen I\'ll analyze the impact — whether it affects timeline, performance, or data integrity.\n\nAfter that, I\'ll propose mitigation steps, like additional testing, hotfix planning, or timeline adjustment.\n\nEarly visibility helps prevent bigger issues later.'
-    },
-    {
-        id: 6,
-        question: 'Critical production bug on weekend — how do you respond?',
-        answer: 'First, I\'ll acknowledge the issue and try to reproduce it.\n\nThen I\'ll check logs, database entries, and API responses to identify the root cause.\n\nIf needed, I\'ll inform relevant team members and coordinate quickly.\n\nIf a permanent fix takes time, I\'ll apply a temporary patch to reduce impact and keep the client updated regularly.\n\nIn production issues, communication is as important as fixing the bug.'
-    },
-    {
-        id: 7,
-        question: 'Multiple features running behind schedule — how do you prioritize?',
-        answer: 'I\'ll prioritize based on business impact and release deadlines.\n\nHigh-impact features will get immediate focus.\n\nI\'ll track daily progress through short sync meetings and remove blockers quickly.\n\nIf resources are limited, I\'ll discuss reallocation or scope adjustment with stakeholders.'
-    },
-    {
-        id: 8,
-        question: 'Client asks for new feature not in sprint scope — how do you respond?',
-        answer: 'I\'ll appreciate the request and gather complete details.\n\nThen I\'ll analyze the effort and impact on the current sprint.\n\nI\'ll inform the client that it will go through proper change management and backlog prioritization.\n\nI won\'t commit immediately without checking feasibility.'
-    },
-    {
-        id: 9,
-        question: 'Client reports an API error — how do you debug it?',
-        answer: 'My approach is systematic.\n\nFirst, I try to reproduce the issue using Postman. Then I check the status code — whether it\'s a 400, 401, or 500 error.\n\nAfter that, I check backend logs and verify request payload and authentication tokens.\n\nI also run database queries to ensure data consistency.\n\nOnce fixed, I test again and inform the client only after verification.'
-    },
-    {
-        id: 10,
-        question: 'Client says dashboard data is incorrect — how do you investigate?',
-        answer: 'First, I\'ll clarify exactly which data is incorrect.\n\nThen I\'ll verify in this order: Database → API response → Frontend rendering.\n\nI\'ll run SQL queries to check actual values. Then compare them with API responses. Then check if filters, date range, or aggregation logic is wrong.\n\nThis step-by-step debugging avoids confusion.'
-    },
-    {
-        id: 11,
-        question: 'Client says data is not reflecting correctly in dashboard — walkthrough your approach.',
-        answer: 'My approach is step-by-step verification.\n\nFirst, I\'ll understand exactly which data is incorrect — date range, filters, totals, or specific records.\n\nThen I\'ll verify in this order: Database → API → Frontend.\n\nI\'ll run a query in the database to check actual stored values. Then I\'ll check the API response using Postman. Then I\'ll verify if the frontend is applying any incorrect filters or aggregation logic.\n\nThis structured approach helps identify whether the issue is in backend logic, API layer, or UI.'
-    },
-    {
-        id: 12,
-        question: 'Client complains about slow API response after deployment — what do you check?',
-        answer: 'First, I\'ll confirm the issue by testing the API response time myself.\n\nThen I\'ll check: Server logs, Database query performance, Any new code changes in deployment, Increased load or traffic.\n\nIf needed, I\'ll compare response time before and after deployment.\n\nIt could be due to inefficient queries, missing indexes, or heavy logic added recently.\n\nIf impact is high, I\'ll inform the team immediately and consider rollback while fixing the root cause.'
-    },
-    {
-        id: 13,
-        question: 'Client demands urgent hotfix in production — how do you handle it?',
-        answer: 'First, I\'ll understand the severity — is it blocking business operations?\n\nIf it\'s critical, I\'ll inform the Technical Manager and relevant developers immediately.\n\nWe\'ll reproduce the issue, fix it in a controlled branch, test it properly in staging, and then deploy carefully to production.\n\nEven in urgent cases, I will avoid directly editing production without testing.\n\nCommunication with the client during the process is very important.'
-    },
-    {
-        id: 14,
-        question: 'Client unhappy with recent delivery — how do you respond?',
-        answer: 'First, I\'ll listen carefully without interrupting.\n\nI\'ll understand all concerns clearly — whether it\'s quality, performance, missing features, or communication issues.\n\nThen I\'ll acknowledge the concerns and assure corrective steps.\n\nInternally, I\'ll review what went wrong — estimation issue, testing gap, or requirement misunderstanding.\n\nThen I\'ll share a corrective action plan with clear timelines.'
-    },
-    {
-        id: 15,
-        question: 'Same issue reported by 3 clients at the same time — how do you handle it?',
-        answer: 'That indicates it might be a system-level issue.\n\nFirst, I\'ll check if the issue is reproducible.\n\nThen I\'ll assess impact — how many users affected and how critical the feature is.\n\nSince multiple clients are impacted, I\'ll treat it as high priority and escalate immediately.\n\nI\'ll coordinate with backend and DevOps team and keep all clients informed with updates.'
-    },
-    {
-        id: 16,
-        question: 'Client sends a vague error message — what do you do?',
-        answer: 'In that case, I won\'t assume anything.\n\nI\'ll politely ask for: Steps to reproduce, Screenshot or screen recording, API request details, Time when issue occurred.\n\nMeanwhile, I\'ll check logs around that time.\n\nClear information helps faster resolution.'
-    },
-    {
-        id: 17,
-        question: 'How do you run a daily stand-up with 10 developers and 1 BA?',
-        answer: 'I\'ll keep it structured and time-bound, around 15 minutes.\n\nEach person answers 3 questions: What did you do yesterday? What will you do today? Any blockers?\n\nIf discussion becomes technical or long, I\'ll take it offline after stand-up.\n\nMain goal is visibility and blocker identification, not problem-solving during the meeting.'
-    },
-    {
-        id: 18,
-        question: 'One person dominates stand-up with technical details — how do you handle it?',
-        answer: 'I\'ll respectfully interrupt and say, \'Let\'s take detailed discussion offline to keep stand-up short.\'\n\nStand-up is for status updates, not deep technical discussion.\n\nAfter meeting, I\'ll arrange a separate call if needed.'
-    },
-    {
-        id: 19,
-        question: 'Team comes unprepared and Jira is not updated before stand-up — what do you do?',
-        answer: 'I\'ll remind the team that updating Jira before stand-up is important for transparency.\n\nIf it continues, I\'ll set a rule that Jira must be updated before meeting.\n\nOver time, I\'ll build discipline by explaining how it helps in tracking and reduces confusion.'
-    },
-    {
-        id: 20,
-        question: 'Team is not vocal in Sprint Retrospective — how do you improve engagement?',
-        answer: 'I\'ll create a safe and positive environment.\n\nInstead of open questions, I\'ll use structured format like: What went well? What didn\'t go well? What can we improve?\n\nI may also use anonymous feedback tools to encourage honesty.\n\nThe goal is continuous improvement, not blaming anyone.'
-    },
-    {
-        id: 21,
-        question: 'Conflict between Developer and QA — developer says it\'s expected behavior, QA says it\'s a bug — how do you resolve it?',
-        answer: 'First, I\'ll review the requirement document or acceptance criteria.\n\nThen I\'ll understand both perspectives calmly.\n\nIf the behavior matches requirement, then it\'s not a bug. If requirement is unclear, I\'ll involve the BA for clarification.\n\nDecision should be based on documented requirements, not opinions.\n\nMy role is to ensure alignment, not take sides.'
-    },
-    {
-        id: 22,
-        question: 'You need urgent help from another team but they are fully occupied — how do you manage?',
-        answer: 'In that situation, first I\'ll clearly explain the urgency and business impact to the other team\'s lead.\n\nIf it is truly critical, I\'ll request at least partial support or guidance instead of full involvement.\n\nIf they are still unavailable, I\'ll check internally whether someone from our team can temporarily handle it.\n\nAt the same time, I\'ll inform my Technical Manager about the dependency risk.\n\nMy goal is not to pressure the other team, but to communicate priority clearly and find an alternative solution.'
-    },
-    {
-        id: 23,
-        question: 'A new team member is slowing down the sprint because they are learning — how do you handle it?',
-        answer: 'I understand that onboarding takes time.\n\nI\'ll assign them smaller and well-defined tasks initially.\n\nI may pair them with a senior developer for knowledge transfer.\n\nI\'ll also ensure they understand the overall architecture and data flow clearly.\n\nIn the short term, sprint speed may reduce slightly, but in the long term, it strengthens the team.\n\nSupporting them properly is important for team stability.'
-    },
-    {
-        id: 24,
-        question: 'Two senior developers disagree on technical approach — how do you resolve it?',
-        answer: 'First, I\'ll let both explain their approach with pros and cons.\n\nThen we\'ll evaluate based on: Performance, Scalability, Maintainability, Timeline impact.\n\nIf needed, we can create a small proof-of-concept or consult the Technical Manager.\n\nThe final decision should be based on business and technical impact, not personal preference.\n\nMy role is to ensure constructive discussion and alignment.'
-    },
-    {
-        id: 25,
-        question: 'Stakeholder asks for a consolidated status of 3 parallel projects — how do you present it?',
-        answer: 'I\'ll prepare a structured summary including: Overall progress percentage, Completed milestones, Current sprint focus, Risks or blockers, Expected completion dates.\n\nI\'ll avoid too many technical details and focus on business-level updates.\n\nIf possible, I\'ll present it in a simple dashboard format — green for on-track, yellow for risk, red for delayed.\n\nStakeholders need clarity, not complexity.'
-    }
 ];
