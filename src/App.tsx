@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
-import { Coffee, Database, Code2, Check, Award, LayoutDashboard, Target, Zap, RotateCcw, Users, Globe, Server, Mic, MicOff, Loader2, Play, ChevronDown, Upload, FileText, SendHorizontal } from 'lucide-react';
+import { Coffee, Database, Code2, Check, Award, Target, Zap, RotateCcw, Users, Globe, Server, Mic, MicOff, Loader2, Play, ChevronDown, Upload, FileText, SendHorizontal, Star, BookOpenCheck } from 'lucide-react';
 import { questionsData, sections } from './data';
 import type { Question, SectionInfo } from './data';
 import { evaluateAnswer, evaluateCode, generateProjectQuestions, evaluateProjectAnswer } from './utils/groq';
@@ -45,7 +45,7 @@ function VoiceEvalPanel({ result }: { result: EvaluationResult }) {
         )}
       </div>
       <div className="eval-ideal-section">
-        <div className="eval-ideal-header"><Check size={14}/> Ideal Response</div>
+        <div className="eval-ideal-header"><Check size={14} /> Ideal Response</div>
         <p className="eval-ideal-text">{result.idealAnswer}</p>
       </div>
     </div>
@@ -67,7 +67,7 @@ function CodeEvalPanel({ result }: { result: CodeEvaluationResult }) {
         </div>
         <div className="eval-score-badge">{result.score}</div>
       </div>
-      
+
       <div className="eval-feedback-box">
         <p className="eval-feedback-text">{result.feedback}</p>
       </div>
@@ -85,13 +85,13 @@ function CodeEvalPanel({ result }: { result: CodeEvaluationResult }) {
 
       {result.correctness && (
         <div className="eval-ideal-section">
-          <div className="eval-ideal-header"><Target size={14}/> Correctness Analysis</div>
+          <div className="eval-ideal-header"><Target size={14} /> Correctness Analysis</div>
           <p className="eval-ideal-text">{result.correctness}</p>
         </div>
       )}
       {result.improvements && (
         <div className="eval-ideal-section">
-          <div className="eval-ideal-header"><Zap size={14}/> Suggested Improvements</div>
+          <div className="eval-ideal-header"><Zap size={14} /> Suggested Improvements</div>
           <p className="eval-ideal-text">{result.improvements}</p>
         </div>
       )}
@@ -150,10 +150,10 @@ function VoiceInterviewPanel({
     if (!transcript.trim()) { alert('Please record your answer first.'); return; }
     setIsEvaluating(true);
     try {
-      const r = onEvaluate 
+      const r = onEvaluate
         ? await onEvaluate(questionText, transcript)
         : await evaluateAnswer(questionText, transcript);
-        
+
       setResult(r);
       if (r.score >= 80 && typeof questionId === 'number' && onMarkDone) {
         onMarkDone(questionId);
@@ -301,18 +301,22 @@ function QuestionCard({
   displayIdx,
   isCompleted,
   isRevised,
+  isFavorite,
   isDSA,
   onToggleDone,
   onToggleRevise,
+  onToggleFavorite,
   onMarkDone,
 }: {
   q: { id: number; text: string; sectionId: string; subsection?: string };
   displayIdx: number;
   isCompleted: boolean;
   isRevised: boolean;
+  isFavorite: boolean;
   isDSA: boolean;
   onToggleDone: (id: number) => void;
   onToggleRevise: (id: number) => void;
+  onToggleFavorite: (id: number) => void;
   onMarkDone: (id: number) => void;
 }) {
   const [panelOpen, setPanelOpen] = useState(false);
@@ -341,8 +345,19 @@ function QuestionCard({
       </div>
 
       <div className="question-content">
-        <div className="question-number">Question {displayIdx}</div>
-        <div className="question-text">{q.text}</div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <div className="question-number">Question {displayIdx}</div>
+            <div className="question-text">{q.text}</div>
+          </div>
+          <button
+            className={`star-btn ${isFavorite ? 'active' : ''}`}
+            onClick={(e) => { e.stopPropagation(); onToggleFavorite(q.id); }}
+            title={isFavorite ? "Remove from Favorites" : "Mark as Favorite"}
+          >
+            <Star size={22} fill={isFavorite ? "#eab308" : "transparent"} stroke={isFavorite ? "#eab308" : "#71717a"} strokeWidth={1.5} />
+          </button>
+        </div>
 
         {/* Toggle Button */}
         <button
@@ -369,7 +384,7 @@ function QuestionCard({
 
 function App() {
   const [activeSectionId, setActiveSectionId] = useState<string>('java');
-  
+
   // Custom Hook Logic remains the same
   const [completedQuests, setCompletedQuests] = useState<Set<number>>(() => {
     const saved = localStorage.getItem('trackerProgress');
@@ -378,6 +393,11 @@ function App() {
   });
   const [revisedQuests, setRevisedQuests] = useState<Set<number>>(() => {
     const saved = localStorage.getItem('trackerReviseProgress');
+    if (saved) { try { return new Set(JSON.parse(saved)); } catch (e) { console.error(e); } }
+    return new Set();
+  });
+  const [favoriteQuests, setFavoriteQuests] = useState<Set<number>>(() => {
+    const saved = localStorage.getItem('trackerFavoriteProgress');
     if (saved) { try { return new Set(JSON.parse(saved)); } catch (e) { console.error(e); } }
     return new Set();
   });
@@ -414,6 +434,10 @@ function App() {
   }, [revisedQuests]);
 
   useEffect(() => {
+    localStorage.setItem('trackerFavoriteProgress', JSON.stringify(Array.from(favoriteQuests)));
+  }, [favoriteQuests]);
+
+  useEffect(() => {
     localStorage.setItem('trackerCustomSections', JSON.stringify(customSections));
   }, [customSections]);
 
@@ -431,6 +455,14 @@ function App() {
 
   const toggleRevise = (id: number) => {
     setRevisedQuests(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleFavorite = (id: number) => {
+    setFavoriteQuests(prev => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
@@ -505,13 +537,13 @@ function App() {
         // Clean up markdown syntax like bullets, bold, italics.
         let text = block.trim();
         if (!text) return;
-        
+
         // Remove markdown list indicators at the start of a line
         text = text.replace(/^[-*+]\s+/gm, '');
         text = text.replace(/^\d+\.\s+/gm, '');
         // Remove markdown bold/italic hashes
         text = text.replace(/[*_~`#]+/g, '');
-        
+
         // If block is still multi-line, collapse it
         text = text.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
 
@@ -566,8 +598,8 @@ function App() {
       {/* Sidebar */}
       <aside className="sidebar glass-panel-strong">
         <div className="brand">
-          <div className="brand-icon pulse-glow"><LayoutDashboard size={24} /></div>
-          <span className="brand-text">CodeTracker</span>
+          <div className="brand-icon pulse-glow"><BookOpenCheck size={24} /></div>
+          <span className="brand-text">All The Best!</span>
         </div>
 
         <div className="overall-progress animate-fade-up" style={{ animationDelay: '0.1s' }}>
@@ -621,35 +653,35 @@ function App() {
             style={{ animationDelay: `${0.2 + allSections.length * 0.1}s` }}
             onClick={() => setActiveSectionId('project-discussion')}
           >
-             <div className="nav-icon" style={{ color: activeSectionId === 'project-discussion' ? '#fff' : '' }}>
-               <Server size={20} className={activeSectionId === 'project-discussion' ? 'bounce-subtle' : ''} />
-             </div>
-             <div className="nav-info">
-               <span className="nav-title">Project Discussion</span>
-             </div>
+            <div className="nav-icon" style={{ color: activeSectionId === 'project-discussion' ? '#fff' : '' }}>
+              <Server size={20} className={activeSectionId === 'project-discussion' ? 'bounce-subtle' : ''} />
+            </div>
+            <div className="nav-info">
+              <span className="nav-title">Project Discussion</span>
+            </div>
           </button>
         </nav>
 
         <div className="flex flex-col gap-2 mt-auto">
-          <input 
-            type="file" 
-            accept=".md" 
-            style={{ display: 'none' }} 
+          <input
+            type="file"
+            accept=".md"
+            style={{ display: 'none' }}
             ref={fileInputRef}
             onChange={handleFileUpload}
           />
-          <button 
-            className="sidebar-action-btn btn-upload" 
-            style={{ animationDelay: '0.4s' }} 
+          <button
+            className="sidebar-action-btn btn-upload"
+            style={{ animationDelay: '0.4s' }}
             onClick={() => fileInputRef.current?.click()}
           >
             <Upload size={18} />
             <span>Upload .md Questions</span>
           </button>
-          
-          <button 
-            className="sidebar-action-btn btn-reset" 
-            style={{ animationDelay: '0.5s' }} 
+
+          <button
+            className="sidebar-action-btn btn-reset"
+            style={{ animationDelay: '0.5s' }}
             onClick={resetProgress}
           >
             <RotateCcw size={18} />
@@ -657,13 +689,13 @@ function App() {
           </button>
 
           {customSections.length > 0 && (
-            <button 
-              className="sidebar-action-btn btn-clear" 
-              style={{ animationDelay: '0.6s' }} 
+            <button
+              className="sidebar-action-btn btn-clear"
+              style={{ animationDelay: '0.6s' }}
               onClick={clearCustomData}
             >
-               <FileText size={18} />
-               <span>Clear Custom Data</span>
+              <FileText size={18} />
+              <span>Clear Custom Data</span>
             </button>
           )}
         </div>
@@ -704,7 +736,7 @@ function App() {
                   <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Major Challenges & Decisions</label>
                   <textarea className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff', minHeight: '80px', resize: 'vertical' }} placeholder="Explain key technical hurdles..." value={projectDetails.decisions} onChange={e => setProjectDetails({ ...projectDetails, decisions: e.target.value })} />
                 </div>
-                
+
                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
                   <div className="lang-select-wrapper" style={{ flexBasis: '150px' }}>
                     <select className="lang-select" style={{ padding: '0.75rem' }} value={projectDifficulty} onChange={e => setProjectDifficulty(e.target.value as any)}>
@@ -714,9 +746,9 @@ function App() {
                     </select>
                     <ChevronDown size={14} className="lang-select-chevron" style={{ right: '15px' }} />
                   </div>
-                  
-                  <button 
-                    className="continue-btn" 
+
+                  <button
+                    className="continue-btn"
                     style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '8px', padding: '0.75rem', marginBottom: 0 }}
                     disabled={isGeneratingProjectQs || !projectDetails.title || !projectDetails.techStack}
                     onClick={async () => {
@@ -747,9 +779,9 @@ function App() {
                       <div className="question-content">
                         <div className="question-number">Question {idx + 1}</div>
                         <div className="question-text">{q}</div>
-                        <VoiceInterviewPanel 
-                          questionText={q} 
-                          questionId={`project-q-${idx}`} 
+                        <VoiceInterviewPanel
+                          questionText={q}
+                          questionId={`project-q-${idx}`}
                           onEvaluate={(question, answer) => evaluateProjectAnswer(question, answer, projectDetails, projectDifficulty)}
                         />
                       </div>
@@ -774,71 +806,75 @@ function App() {
               <p className="section-desc">{activeSection.description}</p>
             </div>
 
-        <div className="stats-grid animate-fade-up" style={{ animationDelay: '0.3s' }}>
-          <div className="stat-card glass-panel hover-glow-blue card-lift">
-            <div className="stat-icon-wrap bg-blue-500/10"><Target size={20} className="text-blue-400" /></div>
-            <div className="stat-details">
-              <div className="stat-title">Tasks Completed</div>
-              <div className="stat-value text-blue-400">{sectionCompleted} <span className="stat-total">/ {sectionTotal}</span></div>
-            </div>
-          </div>
-          <div className="stat-card glass-panel hover-glow-amber card-lift">
-            <div className="stat-icon-wrap bg-amber-500/10"><Zap size={20} className="text-amber-400" /></div>
-            <div className="stat-details">
-              <div className="stat-title">Completion Rate</div>
-              <div className="stat-value text-amber-400">{sectionProgress}%</div>
-            </div>
-          </div>
-          <div className="stat-card glass-panel hover-glow-emerald card-lift">
-            <div className="stat-icon-wrap bg-emerald-500/10"><Award size={20} className="text-emerald-400" /></div>
-            <div className="stat-details">
-              <div className="stat-title">Remaining</div>
-              <div className="stat-value text-emerald-400">{sectionTotal - sectionCompleted}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="questions-list">
-          {groupedQuestions ? (() => {
-            let globalIdx = 0;
-            return groupedQuestions.map(group => (
-              <div key={group.name} className="webdev-subsection">
-                <div className="webdev-subsection-header">
-                  <span className="webdev-subsection-title">{group.name}</span>
-                  <span className="webdev-subsection-count">{group.questions.length} Questions</span>
+            <div className="stats-grid animate-fade-up" style={{ animationDelay: '0.3s' }}>
+              <div className="stat-card glass-panel hover-glow-blue card-lift">
+                <div className="stat-icon-wrap bg-blue-500/10"><Target size={20} className="text-blue-400" /></div>
+                <div className="stat-details">
+                  <div className="stat-title">Tasks Completed</div>
+                  <div className="stat-value text-blue-400">{sectionCompleted} <span className="stat-total">/ {sectionTotal}</span></div>
                 </div>
-                {group.questions.map(q => {
-                  const displayIdx = ++globalIdx;
-                  return (
-                    <QuestionCard
-                      key={q.id}
-                      q={q}
-                      displayIdx={displayIdx}
-                      isCompleted={completedQuests.has(q.id)}
-                      isRevised={revisedQuests.has(q.id)}
-                      isDSA={isDSA}
-                      onToggleDone={toggleQuestion}
-                      onToggleRevise={toggleRevise}
-                      onMarkDone={markDone}
-                    />
-                  );
-                })}
               </div>
-            ));
-          })() : sectionQuestions.map((q, idx) => (
-            <QuestionCard
-              key={q.id}
-              q={q}
-              displayIdx={idx + 1}
-              isCompleted={completedQuests.has(q.id)}
-              isRevised={revisedQuests.has(q.id)}
-              isDSA={isDSA}
-              onToggleDone={toggleQuestion}
-              onToggleRevise={toggleRevise}
-              onMarkDone={markDone}
-            />
-            ))}
-          </div>
+              <div className="stat-card glass-panel hover-glow-amber card-lift">
+                <div className="stat-icon-wrap bg-amber-500/10"><Zap size={20} className="text-amber-400" /></div>
+                <div className="stat-details">
+                  <div className="stat-title">Completion Rate</div>
+                  <div className="stat-value text-amber-400">{sectionProgress}%</div>
+                </div>
+              </div>
+              <div className="stat-card glass-panel hover-glow-emerald card-lift">
+                <div className="stat-icon-wrap bg-emerald-500/10"><Award size={20} className="text-emerald-400" /></div>
+                <div className="stat-details">
+                  <div className="stat-title">Remaining</div>
+                  <div className="stat-value text-emerald-400">{sectionTotal - sectionCompleted}</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="questions-list">
+              {groupedQuestions ? (() => {
+                let globalIdx = 0;
+                return groupedQuestions.map(group => (
+                  <div key={group.name} className="webdev-subsection">
+                    <div className="webdev-subsection-header">
+                      <span className="webdev-subsection-title">{group.name}</span>
+                      <span className="webdev-subsection-count">{group.questions.length} Questions</span>
+                    </div>
+                    {group.questions.map(q => {
+                      const displayIdx = ++globalIdx;
+                      return (
+                        <QuestionCard
+                          key={q.id}
+                          q={q}
+                          displayIdx={displayIdx}
+                          isCompleted={completedQuests.has(q.id)}
+                          isRevised={revisedQuests.has(q.id)}
+                          isFavorite={favoriteQuests.has(q.id)}
+                          isDSA={isDSA}
+                          onToggleDone={toggleQuestion}
+                          onToggleRevise={toggleRevise}
+                          onToggleFavorite={toggleFavorite}
+                          onMarkDone={markDone}
+                        />
+                      );
+                    })}
+                  </div>
+                ));
+              })() : sectionQuestions.map((q, idx) => (
+                <QuestionCard
+                  key={q.id}
+                  q={q}
+                  displayIdx={idx + 1}
+                  isCompleted={completedQuests.has(q.id)}
+                  isRevised={revisedQuests.has(q.id)}
+                  isFavorite={favoriteQuests.has(q.id)}
+                  isDSA={isDSA}
+                  onToggleDone={toggleQuestion}
+                  onToggleRevise={toggleRevise}
+                  onToggleFavorite={toggleFavorite}
+                  onMarkDone={markDone}
+                />
+              ))}
+            </div>
           </>
         )}
       </main>

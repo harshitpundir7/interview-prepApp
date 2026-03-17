@@ -105,6 +105,20 @@ body {
   border-color: rgba(59, 130, 246, 0.2);
 }
 
+.btn-clear {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.2);
+}
+
+.btn-clear:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  box-shadow: 0 4px 20px -5px rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+  color: #fca5a5;
+}
+
 .btn-reset:hover {
   background: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.4);
@@ -503,6 +517,9 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
+  padding-right: 8px;
+  margin-bottom: 20px;
 }
 
 .nav-item {
@@ -851,6 +868,26 @@ button {
   color: #71717a;
   text-decoration: line-through;
   text-decoration-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Star Button */
+.star-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.star-btn:hover {
+  transform: scale(1.1);
+}
+
+.star-btn.active {
+  filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.5));
 }
 
 /* Pill-shaped Primary Toggle Button */
