@@ -18,16 +18,25 @@ declare global {
 // ── Shared Evaluation Result Panels ────────────────────────────────────────
 
 function VoiceEvalPanel({ result }: { result: EvaluationResult }) {
-  const scoreColor = result.score >= 80 ? '#34d399' : result.score >= 50 ? '#fbbf24' : '#f87171';
+  const scoreColor = result.score >= 80 ? '#10b981' : result.score >= 50 ? '#f59e0b' : '#ef4444';
+  const scoreRGB = result.score >= 80 ? '16, 185, 129' : result.score >= 50 ? '245, 158, 11' : '239, 68, 68';
+
   return (
-    <div className="eval-result animate-scale-in" style={{ borderColor: `${scoreColor}33` }}>
+    <div className="eval-result animate-scale-in" style={{ '--eval-color': scoreColor, '--eval-color-rgb': scoreRGB } as any}>
       <div className="eval-header">
-        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#a1a1aa' }}>🤖 AI Evaluation</span>
-        <span className="eval-score" style={{ color: scoreColor }}>{result.score}%</span>
+        <div className="flex items-center gap-2">
+          <Award size={20} color={scoreColor} className="pulse-soft" />
+          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#e4e4e7', letterSpacing: '0.02em' }}>
+            AI Evaluation Result
+          </span>
+        </div>
+        <div className="eval-score-badge">{result.score}</div>
       </div>
-      <p className="eval-feedback">{result.feedback}</p>
+      <div className="eval-feedback-box">
+        <p className="eval-feedback-text">{result.feedback}</p>
+      </div>
       <div className="eval-ideal-section">
-        <div className="eval-ideal-header">✅ Ideal Answer</div>
+        <div className="eval-ideal-header"><Check size={14}/> Ideal Response</div>
         <p className="eval-ideal-text">{result.idealAnswer}</p>
       </div>
     </div>
@@ -35,33 +44,45 @@ function VoiceEvalPanel({ result }: { result: EvaluationResult }) {
 }
 
 function CodeEvalPanel({ result }: { result: CodeEvaluationResult }) {
-  const scoreColor = result.score >= 80 ? '#34d399' : result.score >= 50 ? '#fbbf24' : '#f87171';
+  const scoreColor = result.score >= 80 ? '#10b981' : result.score >= 50 ? '#f59e0b' : '#ef4444';
+  const scoreRGB = result.score >= 80 ? '16, 185, 129' : result.score >= 50 ? '245, 158, 11' : '239, 68, 68';
+
   return (
-    <div className="eval-result animate-scale-in" style={{ borderColor: `${scoreColor}33` }}>
+    <div className="eval-result animate-scale-in" style={{ '--eval-color': scoreColor, '--eval-color-rgb': scoreRGB } as any}>
       <div className="eval-header">
-        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#a1a1aa' }}>🤖 AI Code Review</span>
-        <span className="eval-score" style={{ color: scoreColor }}>{result.score}%</span>
+        <div className="flex items-center gap-2">
+          <Code2 size={20} color={scoreColor} className="pulse-soft" />
+          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#e4e4e7', letterSpacing: '0.02em' }}>
+            AI Code Review
+          </span>
+        </div>
+        <div className="eval-score-badge">{result.score}</div>
       </div>
-      <p className="eval-feedback">{result.feedback}</p>
+      
+      <div className="eval-feedback-box">
+        <p className="eval-feedback-text">{result.feedback}</p>
+      </div>
+
       <div className="code-eval-grid">
         <div className="code-eval-item">
-          <span className="code-eval-label">⏱ Time</span>
+          <span className="code-eval-label">⏱ Target Time</span>
           <span className="code-eval-value">{result.timeComplexity}</span>
         </div>
         <div className="code-eval-item">
-          <span className="code-eval-label">🗂 Space</span>
+          <span className="code-eval-label">🗂 Target Space</span>
           <span className="code-eval-value">{result.spaceComplexity}</span>
         </div>
       </div>
+
       {result.correctness && (
         <div className="eval-ideal-section">
-          <div className="eval-ideal-header">🔍 Correctness</div>
+          <div className="eval-ideal-header"><Target size={14}/> Correctness Analysis</div>
           <p className="eval-ideal-text">{result.correctness}</p>
         </div>
       )}
       {result.improvements && (
-        <div className="eval-ideal-section" style={{ marginTop: '0.75rem' }}>
-          <div className="eval-ideal-header">💡 Improvements</div>
+        <div className="eval-ideal-section">
+          <div className="eval-ideal-header"><Zap size={14}/> Suggested Improvements</div>
           <p className="eval-ideal-text">{result.improvements}</p>
         </div>
       )}
@@ -201,28 +222,35 @@ function CodeEditorPanel({
   return (
     <div className="code-editor-panel animate-fade-up">
       <div className="code-editor-toolbar">
-        <div className="lang-select-wrapper">
-          <ChevronDown size={14} className="lang-select-chevron" />
-          <select
-            className="lang-select"
-            value={language}
-            onChange={e => setLanguage(e.target.value)}
-          >
-            {LANGUAGES.map(l => (
-              <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>
-            ))}
-          </select>
+        <div className="flex items-center">
+          <div className="window-controls">
+            <div className="window-dot dot-red"></div>
+            <div className="window-dot dot-yellow"></div>
+            <div className="window-dot dot-green"></div>
+          </div>
+          <div className="lang-select-wrapper">
+            <select
+              className="lang-select"
+              value={language}
+              onChange={e => setLanguage(e.target.value)}
+            >
+              {LANGUAGES.map(l => (
+                <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>
+              ))}
+            </select>
+            <ChevronDown size={14} className="lang-select-chevron" />
+          </div>
         </div>
 
-        <button className="eval-action-btn" onClick={handleEvaluate} disabled={isEvaluating}>
+        <button className="eval-action-btn hover-glow" onClick={handleEvaluate} disabled={isEvaluating}>
           {isEvaluating ? <Loader2 size={16} className="animate-spin" /> : <Play size={16} />}
-          {isEvaluating ? 'AI Reviewing...' : 'Submit & Review'}
+          {isEvaluating ? 'Reviewing...' : 'Submit Code'}
         </button>
       </div>
 
       <div className="monaco-wrapper">
         <Editor
-          height="280px"
+          height="320px"
           language={language}
           value={code}
           onChange={(val) => setCode(val || '')}
@@ -232,13 +260,20 @@ function CodeEditorPanel({
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
             lineNumbersMinChars: 3,
-            padding: { top: 12, bottom: 12 },
+            padding: { top: 16, bottom: 16 },
             fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+            smoothScrolling: true,
+            cursorBlinking: "smooth",
+            cursorSmoothCaretAnimation: "on"
           }}
         />
       </div>
 
-      {result && <CodeEvalPanel result={result} />}
+      {result && (
+        <div style={{ padding: '0 1.5rem 1.5rem' }}>
+          <CodeEvalPanel result={result} />
+        </div>
+      )}
     </div>
   );
 }
@@ -290,7 +325,7 @@ function QuestionCard({
       </div>
 
       <div className="question-content">
-        <div className="question-number">Q{displayIdx}</div>
+        <div className="question-number">Question {displayIdx}</div>
         <div className="question-text">{q.text}</div>
 
         {/* Toggle Button */}
@@ -318,6 +353,8 @@ function QuestionCard({
 
 function App() {
   const [activeSectionId, setActiveSectionId] = useState<string>('java');
+  
+  // Custom Hook Logic remains the same
   const [completedQuests, setCompletedQuests] = useState<Set<number>>(() => {
     const saved = localStorage.getItem('trackerProgress');
     if (saved) { try { return new Set(JSON.parse(saved)); } catch (e) { console.error(e); } }
@@ -470,10 +507,8 @@ function App() {
             {React.createElement(iconMap[activeSection.icon as keyof typeof iconMap], { className: 'section-badge-icon pulse-soft' })}
             <span>{activeSection.title} Mastery</span>
           </div>
-          <h1 className="section-title text-transparent" style={{
+          <h1 className="section-title text-transparent bg-clip-text" style={{
             backgroundImage: `linear-gradient(to right, ${gradientColor})`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
           }}>
             {activeSection.title} Preparation
           </h1>
