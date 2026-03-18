@@ -3,8 +3,10 @@ import Editor from '@monaco-editor/react';
 import { Coffee, Database, Code2, Check, Award, Target, Zap, RotateCcw, Users, Globe, Server, Mic, MicOff, Loader2, Play, ChevronDown, Upload, FileText, SendHorizontal, Star, BookOpenCheck } from 'lucide-react';
 import { questionsData, sections } from './data';
 import type { Question, SectionInfo } from './data';
-import { evaluateAnswer, evaluateCode, generateProjectQuestions, evaluateProjectAnswer } from './utils/groq';
-import type { EvaluationResult, CodeEvaluationResult } from './utils/groq';
+import { evaluateAnswer, evaluateCode, generateProjectQuestions, evaluateProjectAnswer, generateRepoQuestions, evaluateRepoAnswer } from './utils/groq';
+import type { EvaluationResult, CodeEvaluationResult, RepoProjectDetails } from './utils/groq';
+import { fetchUserRepos, fetchRepoDetails } from './utils/github';
+import type { GitHubRepo } from './utils/github';
 
 const iconMap: Record<string, React.ElementType> = { Coffee, Database, Code2, Users, Globe, Server, FileText };
 
@@ -418,12 +420,21 @@ function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Project Discussion State
+  const [entryMethod, setEntryMethod] = useState<'manual' | 'github'>('manual');
+  
   const [projectDetails, setProjectDetails] = useState<import('./utils/groq').ProjectDetails>({
     title: '', techStack: '', purpose: '', challenges: '', decisions: ''
   });
   const [projectDifficulty, setProjectDifficulty] = useState<'Easy' | 'Medium' | 'Hard'>('Medium');
   const [projectQuestions, setProjectQuestions] = useState<string[]>([]);
   const [isGeneratingProjectQs, setIsGeneratingProjectQs] = useState(false);
+
+  const [githubInput, setGithubInput] = useState('');
+  const [githubRepos, setGithubRepos] = useState<GitHubRepo[]>([]);
+  const [isFetchingRepos, setIsFetchingRepos] = useState(false);
+  const [selectedRepoId, setSelectedRepoId] = useState<number | ''>('');
+  const [isAnalyzingRepo, setIsAnalyzingRepo] = useState(false);
+  const [repoDetails, setRepoDetails] = useState<RepoProjectDetails | null>(null);
 
   useEffect(() => {
     localStorage.setItem('trackerProgress', JSON.stringify(Array.from(completedQuests)));
@@ -719,60 +730,169 @@ function App() {
             </div>
 
             <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                <div>
-                  <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Project Title</label>
-                  <input className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff' }} placeholder="e.g. E-Commerce Platform" value={projectDetails.title} onChange={e => setProjectDetails({ ...projectDetails, title: e.target.value })} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Tech Stack</label>
-                  <input className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff' }} placeholder="e.g. React, Node.js, PostgreSQL" value={projectDetails.techStack} onChange={e => setProjectDetails({ ...projectDetails, techStack: e.target.value })} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Core Purpose</label>
-                  <textarea className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff', minHeight: '80px', resize: 'vertical' }} placeholder="What does it do?" value={projectDetails.purpose} onChange={e => setProjectDetails({ ...projectDetails, purpose: e.target.value })} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Major Challenges & Decisions</label>
-                  <textarea className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff', minHeight: '80px', resize: 'vertical' }} placeholder="Explain key technical hurdles..." value={projectDetails.decisions} onChange={e => setProjectDetails({ ...projectDetails, decisions: e.target.value })} />
-                </div>
+              <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
+                <button 
+                  className={`nav-item ${entryMethod === 'manual' ? 'active' : ''}`}
+                  onClick={() => setEntryMethod('manual')}
+                  style={{ flex: 1, justifyContent: 'center' }}
+                >
+                  <FileText size={18} /> Manual Entry
+                </button>
+                <button 
+                  className={`nav-item ${entryMethod === 'github' ? 'active' : ''}`}
+                  onClick={() => setEntryMethod('github')}
+                  style={{ flex: 1, justifyContent: 'center' }}
+                >
+                  <Globe size={18} /> GitHub Repository
+                </button>
+              </div>
 
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
-                  <div className="lang-select-wrapper" style={{ flexBasis: '150px' }}>
-                    <select className="lang-select" style={{ padding: '0.75rem' }} value={projectDifficulty} onChange={e => setProjectDifficulty(e.target.value as any)}>
-                      <option value="Easy">Easy</option>
-                      <option value="Medium">Medium</option>
-                      <option value="Hard">Hard</option>
-                    </select>
-                    <ChevronDown size={14} className="lang-select-chevron" style={{ right: '15px' }} />
+              {entryMethod === 'manual' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  <div>
+                    <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Project Title</label>
+                    <input className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff' }} placeholder="e.g. E-Commerce Platform" value={projectDetails.title} onChange={e => setProjectDetails({ ...projectDetails, title: e.target.value })} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Tech Stack</label>
+                    <input className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff' }} placeholder="e.g. React, Node.js, PostgreSQL" value={projectDetails.techStack} onChange={e => setProjectDetails({ ...projectDetails, techStack: e.target.value })} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Core Purpose</label>
+                    <textarea className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff', minHeight: '80px', resize: 'vertical' }} placeholder="What does it do?" value={projectDetails.purpose} onChange={e => setProjectDetails({ ...projectDetails, purpose: e.target.value })} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Major Challenges & Decisions</label>
+                    <textarea className="lang-select" style={{ width: '100%', padding: '0.75rem', fontSize: '1rem', color: '#fff', minHeight: '80px', resize: 'vertical' }} placeholder="Explain key technical hurdles..." value={projectDetails.decisions} onChange={e => setProjectDetails({ ...projectDetails, decisions: e.target.value })} />
                   </div>
 
-                  <button
-                    className="continue-btn"
-                    style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '8px', padding: '0.75rem', marginBottom: 0 }}
-                    disabled={isGeneratingProjectQs || !projectDetails.title || !projectDetails.techStack}
-                    onClick={async () => {
-                      setIsGeneratingProjectQs(true);
-                      try {
-                        const qs = await generateProjectQuestions(projectDetails, projectDifficulty);
-                        setProjectQuestions(qs);
-                      } catch (e) {
-                        alert('Could not generate questions. Try again.');
-                      } finally {
-                        setIsGeneratingProjectQs(false);
-                      }
-                    }}
-                  >
-                    {isGeneratingProjectQs ? <Loader2 size={18} className="animate-spin" /> : <SendHorizontal size={18} />}
-                    {isGeneratingProjectQs ? 'Generating Questions...' : 'Generate Questions'}
-                  </button>
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
+                    <div className="lang-select-wrapper" style={{ flexBasis: '150px' }}>
+                      <select className="lang-select" style={{ padding: '0.75rem' }} value={projectDifficulty} onChange={e => setProjectDifficulty(e.target.value as any)}>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                      </select>
+                      <ChevronDown size={14} className="lang-select-chevron" style={{ right: '15px' }} />
+                    </div>
+
+                    <button
+                      className="continue-btn"
+                      style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '8px', padding: '0.75rem', marginBottom: 0 }}
+                      disabled={isGeneratingProjectQs || !projectDetails.title || !projectDetails.techStack}
+                      onClick={async () => {
+                        setIsGeneratingProjectQs(true);
+                        try {
+                          const qs = await generateProjectQuestions(projectDetails, projectDifficulty);
+                          setProjectQuestions(qs);
+                          setRepoDetails(null); // Clear repo context if switching to manual
+                        } catch (e: any) {
+                          alert(e.message || 'Could not generate questions. Try again.');
+                        } finally {
+                          setIsGeneratingProjectQs(false);
+                        }
+                      }}
+                    >
+                      {isGeneratingProjectQs ? <Loader2 size={18} className="animate-spin" /> : <SendHorizontal size={18} />}
+                      {isGeneratingProjectQs ? 'Generating Questions...' : 'Generate Questions'}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                  <div>
+                    <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>GitHub Username or Personal Access Token</label>
+                    <div style={{ display: 'flex', gap: '1rem' }}>
+                      <input className="lang-select" style={{ flex: 1, padding: '0.75rem', fontSize: '1rem', color: '#fff' }} placeholder="octocat or ghp_..." value={githubInput} onChange={e => setGithubInput(e.target.value)} />
+                      <button
+                        className="sidebar-action-btn btn-reset"
+                        style={{ width: 'auto', marginBottom: 0, animation: 'none' }}
+                        disabled={!githubInput.trim() || isFetchingRepos}
+                        onClick={async () => {
+                          setIsFetchingRepos(true);
+                          setGithubRepos([]);
+                          setSelectedRepoId('');
+                          try {
+                            const repos = await fetchUserRepos(githubInput);
+                            setGithubRepos(repos);
+                            if (repos.length > 0) setSelectedRepoId(repos[0].id);
+                          } catch (e: any) {
+                            alert(e.message || 'Failed to fetch repositories.');
+                          } finally {
+                            setIsFetchingRepos(false);
+                          }
+                        }}
+                      >
+                        {isFetchingRepos ? <Loader2 size={18} className="animate-spin" /> : <Globe size={18} />}
+                        {isFetchingRepos ? 'Fetching...' : 'Fetch'}
+                      </button>
+                    </div>
+                    <p style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: '#71717a' }}>Public repos only with username. Use PAT for private repos.</p>
+                  </div>
+
+                  {githubRepos.length > 0 && (
+                    <div className="animate-fade-up">
+                      <label style={{ display: 'block', color: '#a1a1aa', fontSize: '0.9rem', marginBottom: '0.5rem' }}>Select Repository ({githubRepos.length} found)</label>
+                      <div className="lang-select-wrapper" style={{ width: '100%' }}>
+                        <select className="lang-select" style={{ width: '100%', padding: '0.75rem' }} value={selectedRepoId} onChange={e => setSelectedRepoId(Number(e.target.value))}>
+                          {githubRepos.map(r => (
+                            <option key={r.id} value={r.id}>{r.name} {r.language ? `(${r.language})` : ''} - ⭐️{r.stargazers_count}</option>
+                          ))}
+                        </select>
+                        <ChevronDown size={14} className="lang-select-chevron" style={{ right: '15px' }} />
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginTop: '1rem' }}>
+                    <div className="lang-select-wrapper" style={{ flexBasis: '150px' }}>
+                      <select className="lang-select" style={{ padding: '0.75rem' }} value={projectDifficulty} onChange={e => setProjectDifficulty(e.target.value as any)}>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                      </select>
+                      <ChevronDown size={14} className="lang-select-chevron" style={{ right: '15px' }} />
+                    </div>
+
+                    <button
+                      className="continue-btn"
+                      style={{ flex: 1, display: 'flex', justifyContent: 'center', gap: '8px', padding: '0.75rem', marginBottom: 0 }}
+                      disabled={isAnalyzingRepo || !selectedRepoId}
+                      onClick={async () => {
+                        const repo = githubRepos.find(r => r.id === selectedRepoId);
+                        if (!repo) return;
+                        setIsAnalyzingRepo(true);
+                        try {
+                          const details = await fetchRepoDetails(repo.owner.login, repo.name, githubInput);
+                          const rDetails: RepoProjectDetails = {
+                            name: repo.name,
+                            description: repo.description || '',
+                            languages: details.languages,
+                            readme: details.readme
+                          };
+                          setRepoDetails(rDetails);
+                          const qs = await generateRepoQuestions(rDetails, projectDifficulty);
+                          setProjectQuestions(qs);
+                        } catch (e: any) {
+                          alert(e.message || 'Could not generate questions. Try again.');
+                        } finally {
+                          setIsAnalyzingRepo(false);
+                        }
+                      }}
+                    >
+                      {isAnalyzingRepo ? <Loader2 size={18} className="animate-spin" /> : <Code2 size={18} />}
+                      {isAnalyzingRepo ? 'Analyzing Repo...' : 'Analyze & Generate Questions'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {projectQuestions.length > 0 && (
               <div className="questions-list animate-fade-up">
-                <h3 style={{ fontSize: '1.2rem', color: '#e4e4e7', marginBottom: '1rem' }}>AI Interview Questions:</h3>
+                <h3 style={{ fontSize: '1.2rem', color: '#e4e4e7', marginBottom: '1rem' }}>
+                  AI Interview Questions {repoDetails ? `for ${repoDetails.name}` : ''}:
+                </h3>
                 {projectQuestions.map((q, idx) => (
                   <div key={idx} style={{ marginBottom: '1rem' }}>
                     <div className="question-item glass-panel animate-fade-up" style={{ paddingLeft: '1.5rem' }}>
@@ -782,7 +902,11 @@ function App() {
                         <VoiceInterviewPanel
                           questionText={q}
                           questionId={`project-q-${idx}`}
-                          onEvaluate={(question, answer) => evaluateProjectAnswer(question, answer, projectDetails, projectDifficulty)}
+                          onEvaluate={(question, answer) => 
+                            repoDetails 
+                              ? evaluateRepoAnswer(question, answer, repoDetails, projectDifficulty)
+                              : evaluateProjectAnswer(question, answer, projectDetails, projectDifficulty)
+                          }
                         />
                       </div>
                     </div>

@@ -455,3 +455,161 @@ export async function evaluateProjectAnswer(
 
   return parseEvaluationResponse(responseText);
 }
+
+export interface RepoProjectDetails {
+  name: string;
+  description: string;
+  languages: string[];
+  readme: string;
+}
+
+function buildRepoQuestionsPrompt(
+  repo: RepoProjectDetails,
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+): string {
+  const profile = DIFFICULTY_PROFILES[difficulty];
+
+  // Trim README to avoid exceeding context limits
+  const trimmedReadme = repo.readme.length > 3000 ? repo.readme.substring(0, 3000) + '... (truncated)' : repo.readme;
+
+  return `
+You are a senior technical interviewer conducting a deep-dive interview based on a candidate's GitHub repository.
+
+## Candidate's Repository
+- Repository Name: ${repo.name}
+- Description: ${repo.description || "No description provided."}
+- Languages Used: ${repo.languages.join(", ") || "Unknown"}
+
+## README Excerpt
+"""
+${trimmedReadme}
+"""
+
+## Your Goal
+Generate exactly 10 interview questions that probe the candidate's real understanding of THIS specific repository.
+Do not ask generic questions that could apply to any project.
+Every question must reference something concrete from the metadata or README above.
+
+## Difficulty: ${difficulty} — ${profile.focus}
+${profile.instructions}
+
+## Question Distribution
+- 3 questions on the languages/tech stack choices based on what's used.
+- 4 questions on specific features, architecture, or setup processes mentioned in the README.
+- 2 questions on potential edge cases, security, testing, or things NOT mentioned in the README.
+- 1 question asking them to reason about an alternative approach or future improvement.
+
+## Rules
+- One focused question per item — no multi-part questions
+- Questions must feel like natural interview conversation, not a quiz
+- Do not number the questions inside the strings
+- Give realistic context to the questions
+
+Respond ONLY with valid JSON. No markdown, no backticks, no extra text:
+{
+  "questions": ["Question 1", "Question 2", "...", "Question 10"]
+}
+  `.trim();
+}
+
+export async function generateRepoQuestions(
+  repo: RepoProjectDetails,
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+): Promise<string[]> {
+  const groq = getGroqClient();
+  const prompt = buildRepoQuestionsPrompt(repo, difficulty);
+
+  const chatCompletion = await groq.chat.completions.create({
+    messages: [
+      { role: 'system', content: SYSTEM_INSTRUCTION },
+      { role: 'user', content: prompt },
+    ],
+    model: 'llama-3.3-70b-versatile',
+    temperature: 0.6,
+    response_format: { type: 'json_object' },
+  });
+
+  const responseText = chatCompletion.choices[0]?.message?.content;
+  if (!responseText) throw new Error('Empty response from model');
+
+  return parseQuestionsResponse(responseText);
+}
+
+function buildRepoEvaluationPrompt(
+  question: string,
+  userAnswer: string,
+  repo: RepoProjectDetails,
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+): string {
+  const profile = EVALUATION_PROFILES[difficulty];
+  const trimmedReadme = repo.readme.length > 2000 ? repo.readme.substring(0, 2000) + '... (truncated)' : repo.readme;
+
+  return `
+You are a Staff Engineering Manager evaluating a ${profile.label} candidate based on their GitHub repository.
+
+## Repository Context
+- Repository Name: ${repo.name}
+- Description: ${repo.description || "None"}
+- Languages: ${repo.languages.join(", ") || "Unknown"}
+- README Excerpt:\n${trimmedReadme}
+
+## Interview Exchange
+Question: "${question}"
+Candidate's Answer: "${userAnswer}"
+
+## Difficulty: ${difficulty}
+Depth Expected: ${profile.depthExpectation}
+Scoring Bias: ${profile.scoringBias}
+
+${SCORE_RUBRIC}
+
+## Instructions
+- Score strictly according to the rubric and difficulty bias above
+- Feedback must be specific to THIS answer
+- The ideal answer must be grounded in the candidate's actual repo context
+- If the candidate's answer is blank, incoherent, or off-topic: score 0 and explain why clearly
+
+## Output Format
+Respond ONLY with valid JSON. No markdown, no backticks, no extra text:
+{
+  "score": <integer 0–100>,
+  "scoreBreakdown": {
+    "technicalAccuracy": <integer 0–40>,
+    "depthAndCompleteness": <integer 0–30>,
+    "clarityAndStructure": <integer 0–20>,
+    "projectRelevance": <integer 0–10>
+  },
+  "feedback": {
+    "strengths": "<1–2 specific things they got right>",
+    "weaknesses": "<1–2 precise gaps or misconceptions>",
+    "improvementTip": "<one concrete thing they can study or practice>"
+  },
+  "idealAnswer": "<How a ${profile.label} would answer this question about their specific repo.>"
+}
+  `.trim();
+}
+
+export async function evaluateRepoAnswer(
+  question: string,
+  userAnswer: string,
+  repo: RepoProjectDetails,
+  difficulty: 'Easy' | 'Medium' | 'Hard'
+): Promise<EvaluationResult> {
+  const groq = getGroqClient();
+  const prompt = buildRepoEvaluationPrompt(question, userAnswer, repo, difficulty);
+
+  const chatCompletion = await groq.chat.completions.create({
+    messages: [
+      { role: 'system', content: SYSTEM_INSTRUCTION },
+      { role: 'user', content: prompt },
+    ],
+    model: 'llama-3.3-70b-versatile',
+    temperature: 0.2,
+    response_format: { type: 'json_object' },
+  });
+
+  const responseText = chatCompletion.choices[0]?.message?.content;
+  if (!responseText) throw new Error('Empty response from model during evaluation');
+
+  return parseEvaluationResponse(responseText);
+}
