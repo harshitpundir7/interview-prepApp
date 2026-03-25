@@ -25,16 +25,9 @@ function VoiceEvalPanel({ result }: { result: EvaluationResult }) {
   const scoreRGB = result.score >= 80 ? '16, 185, 129' : result.score >= 50 ? '245, 158, 11' : '239, 68, 68';
 
   return (
-    <div className="eval-result animate-scale-in" style={{ '--eval-color': scoreColor, '--eval-color-rgb': scoreRGB } as any}>
-      <div className="eval-header">
-        <div className="flex items-center gap-2">
-          <Award size={20} color={scoreColor} className="pulse-soft" />
-          <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#e4e4e7', letterSpacing: '0.02em' }}>
-            AI Evaluation Result
-          </span>
-        </div>
+    <div className="eval-
         <div className="eval-score-badge">{result.score}</div>
-      </div>
+      </div >
       <div className="eval-feedback-box">
         {typeof result.feedback === 'string' ? (
           <p className="eval-feedback-text">{result.feedback}</p>
@@ -50,7 +43,7 @@ function VoiceEvalPanel({ result }: { result: EvaluationResult }) {
         <div className="eval-ideal-header"><Check size={14} /> Ideal Response</div>
         <p className="eval-ideal-text">{result.idealAnswer}</p>
       </div>
-    </div>
+    </div >
   );
 }
 
@@ -421,7 +414,7 @@ function App() {
 
   // Project Discussion State
   const [entryMethod, setEntryMethod] = useState<'manual' | 'github'>('manual');
-  
+
   const [projectDetails, setProjectDetails] = useState<import('./utils/groq').ProjectDetails>({
     title: '', techStack: '', purpose: '', challenges: '', decisions: ''
   });
@@ -731,14 +724,14 @@ function App() {
 
             <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem' }}>
               <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '1rem' }}>
-                <button 
+                <button
                   className={`nav-item ${entryMethod === 'manual' ? 'active' : ''}`}
                   onClick={() => setEntryMethod('manual')}
                   style={{ flex: 1, justifyContent: 'center' }}
                 >
                   <FileText size={18} /> Manual Entry
                 </button>
-                <button 
+                <button
                   className={`nav-item ${entryMethod === 'github' ? 'active' : ''}`}
                   onClick={() => setEntryMethod('github')}
                   style={{ flex: 1, justifyContent: 'center' }}
@@ -902,8 +895,8 @@ function App() {
                         <VoiceInterviewPanel
                           questionText={q}
                           questionId={`project-q-${idx}`}
-                          onEvaluate={(question, answer) => 
-                            repoDetails 
+                          onEvaluate={(question, answer) =>
+                            repoDetails
                               ? evaluateRepoAnswer(question, answer, repoDetails, projectDifficulty)
                               : evaluateProjectAnswer(question, answer, projectDetails, projectDifficulty)
                           }
